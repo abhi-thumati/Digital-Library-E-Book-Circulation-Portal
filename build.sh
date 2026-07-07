@@ -12,8 +12,6 @@ python manage.py collectstatic --no-input
 # Run migrations
 python manage.py migrate
 
-# Create or update superuser if configured
-if [ -f create_superuser.py ]; then
-    echo "Creating/updating superuser..."
-    python create_superuser.py
-fi
+# Create admin user
+echo "Creating admin user..."
+python manage.py create_admin --username admin --password Admin@123456 --email admin@example.com
