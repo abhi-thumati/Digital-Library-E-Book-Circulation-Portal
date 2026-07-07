@@ -19,26 +19,42 @@ def main():
         print("Superuser setup skipped: CREATE_SUPERUSER_USERNAME or CREATE_SUPERUSER_PASSWORD not configured.")
         return
 
-    # Check if user already exists
-    if User.objects.filter(username=username).exists():
-        print(f"Superuser '{username}' already exists.")
-        # Ensure it has the correct ADMIN role
-        user = User.objects.get(username=username)
-        if user.role != 'ADMIN':
+    try:
+        # Check if user already exists
+        if User.objects.filter(username=username).exists():
+            print(f"Superuser '{username}' already exists. Updating...")
+            user = User.objects.get(username=username)
+            # Update password
+            user.set_password(password)
             user.role = 'ADMIN'
             user.is_superuser = True
             user.is_staff = True
+            user.email = email
             user.save()
-            print(f"Updated role of '{username}' to ADMIN.")
-    else:
-        print(f"Creating superuser '{username}'...")
-        user = User.objects.create_superuser(
-            username=username,
-            email=email,
-            password=password,
-            role='ADMIN'
-        )
-        print(f"Superuser '{username}' created successfully.")
+            print(f"✓ Updated admin user '{username}'")
+            print(f"  Email: {user.email}")
+            print(f"  Role: {user.role}")
+            print(f"  Is Staff: {user.is_staff}")
+            print(f"  Is Superuser: {user.is_superuser}")
+        else:
+            print(f"Creating superuser '{username}'...")
+            user = User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
+            # Set admin role after creation
+            user.role = 'ADMIN'
+            user.save()
+            print(f"✓ Superuser '{username}' created successfully")
+            print(f"  Email: {user.email}")
+            print(f"  Role: {user.role}")
+            print(f"  Is Staff: {user.is_staff}")
+            print(f"  Is Superuser: {user.is_superuser}")
+    except Exception as e:
+        print(f"✗ Error creating/updating superuser: {str(e)}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == '__main__':
     main()
