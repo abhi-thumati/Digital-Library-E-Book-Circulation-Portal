@@ -37,16 +37,19 @@ class CustomUserRegisterForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email', 'phone', 'address', 'profile_picture')
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'phone', 'address', 'profile_picture')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Apply styling to all fields
         for field_name, field in self.fields.items():
             if field_name == 'profile_picture':
                 field.widget.attrs['class'] = 'form-control bg-dark text-white border-secondary'
             elif field_name == 'address':
                 field.widget.attrs['class'] = 'form-control bg-dark text-white border-secondary'
                 field.widget.attrs['rows'] = '3'
+            elif field_name in ('password1', 'password2'):
+                field.widget.attrs['class'] = 'form-control bg-dark text-white border-secondary'
             else:
                 field.widget.attrs['class'] = 'form-control bg-dark text-white border-secondary'
 
