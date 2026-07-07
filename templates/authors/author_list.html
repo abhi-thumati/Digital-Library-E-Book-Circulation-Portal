@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lumina | Authors Catalogue{% endblock %}
+
+{% block active_authors %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">Catalogue</span> / <span class="text-white">Authors</span>
+{% endblock %}
+
+{% block content %}
+<div class="card glass-card p-4 shadow-lg mb-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+    <div>
+      <h3 class="text-white fw-bold m-0"><i class="bi bi-person-lines-fill text-primary me-2"></i>Authors Register</h3>
+      <p class="text-secondary small m-0">Browse and manage authors catalogued inside the system.</p>
+    </div>
+    
+    {% if user.is_librarian_or_admin %}
+      <a href="{% url 'authors:author_create' %}" class="btn btn-primary px-4 py-2.5 rounded">
+        <i class="bi bi-person-plus-fill me-1"></i> Add New Author
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Search and Sort Controls -->
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="input-group">
+        <span class="input-group-text bg-dark border-secondary border-opacity-25 text-secondary">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" name="q" value="{{ search_query }}" 
+               class="form-control bg-dark text-white border-secondary border-opacity-25 py-2" 
+               placeholder="Search by author name...">
+        {% if search_query %}
+          <a href="{% url 'authors:author_list' %}" class="btn btn-outline-secondary border-secondary border-opacity-25 text-secondary">Clear</a>
+        {% endif %}
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text bg-dark border-secondary border-opacity-25 text-secondary">
+          <i class="bi bi-sort-alpha-down"></i> Sort
+        </span>
+        <select name="sort" class="form-select bg-dark text-white border-secondary border-opacity-25 py-2" onchange="this.form.submit()">
+          <option value="name" {% if current_sort == 'name' %}selected{% endif %}>Name (A-Z)</option>
+          <option value="-name" {% if current_sort == '-name' %}selected{% endif %}>Name (Z-A)</option>
+          <option value="created_at" {% if current_sort == 'created_at' %}selected{% endif %}>Date Added (Oldest)</option>
+          <option value="-created_at" {% if current_sort == '-created_at' %}selected{% endif %}>Date Added (Newest)</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-outline-primary w-100 py-2">Filter</button>
+    </div>
+  </form>
+
+  <!-- Authors Table -->
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Biography Outline</th>
+          <th class="text-center">Books Count</th>
+          {% if user.is_librarian_or_admin %}
+            <th class="text-end">Actions</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for author in authors %}
+          <tr>
+            <td>
+              <a href="{% url 'authors:author_detail' author.pk %}" class="text-white fw-bold hover-white">{{ author.name }}</a>
+            </td>
+            <td>
+              <span class="text-secondary small">{{ author.biography|default:"No biography written."|truncatewords:15 }}</span>
+            </td>
+            <td class="text-center">
+              <span class="badge badge-glass">{{ author.book_count }}</span>
+            </td>
+            {% if user.is_librarian_or_admin %}
+              <td class="text-end">
+                <div class="d-flex justify-content-end gap-2">
+                  <a href="{% url 'authors:author_update' author.pk %}" class="btn btn-sm btn-outline-info" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <a href="{% url 'authors:author_delete' author.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                </div>
+              </td>
+            {% endif %}
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="text-center py-5 text-secondary">
+              <i class="bi bi-people-fill fs-1 opacity-25 d-block mb-3"></i>
+              No authors match your query. 
+              {% if user.is_librarian_or_admin %}
+                <a href="{% url 'authors:author_create' %}" class="btn btn-primary btn-sm ms-2 py-1 px-3">Add Author</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+    <nav class="d-flex justify-content-center mt-4">
+      <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary border-opacity-25" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link bg-primary border-primary text-white">{{ num }}</span></li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link bg-dark text-white border-secondary border-opacity-25" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}">{{ num }}</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary border-opacity-25" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

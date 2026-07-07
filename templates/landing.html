@@ -1,0 +1,797 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumina | Digital Library Portal</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Lumina is a modern digital library portal for seamless book discovery, borrowing, and management. Join thousands of readers today.">
+
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Custom Portal CSS -->
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+  <style>
+    /* ========== LANDING PAGE STYLES ========== */
+
+    .landing-page {
+      overflow-x: hidden;
+    }
+
+    /* --- Animated Background --- */
+    .landing-hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .landing-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+      animation: heroShift 15s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+
+    @keyframes heroShift {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(-3%, 2%) scale(1.05); }
+      100% { transform: translate(2%, -1%) scale(1); }
+    }
+
+    /* Floating particles */
+    .particles {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleFloat linear infinite;
+    }
+
+    @keyframes particleFloat {
+      0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+    }
+
+    /* Grid overlay */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+
+    /* Hero content */
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 780px;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      margin-bottom: 2rem;
+      animation: fadeSlideUp 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      animation: fadeSlideUp 0.8s ease 0.15s forwards;
+      opacity: 0;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, #6366f1 0%, #3b82f6 40%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      animation: fadeSlideUp 0.8s ease 0.3s forwards;
+      opacity: 0;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeSlideUp 0.8s ease 0.45s forwards;
+      opacity: 0;
+    }
+
+    .btn-hero-primary {
+      padding: 0.85rem 2.5rem;
+      border-radius: 12px;
+      background: var(--gradient-primary);
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+      color: #fff;
+    }
+
+    .btn-hero-secondary {
+      padding: 0.85rem 2.5rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-hero-secondary:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #fff;
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      animation: fadeSlideUp 0.8s ease 0.7s forwards, bounce 2s ease-in-out 1.5s infinite;
+      opacity: 0;
+    }
+
+    .scroll-indicator a {
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      transition: color 0.2s;
+    }
+
+    .scroll-indicator a:hover {
+      color: var(--accent-color);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(8px); }
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Features Section --- */
+    .features-section {
+      position: relative;
+      padding: 6rem 0;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 3.5rem;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      height: 100%;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 60px rgba(99, 102, 241, 0.08);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-icon.icon-indigo {
+      background: rgba(99, 102, 241, 0.12);
+      color: #818cf8;
+    }
+    .feature-icon.icon-blue {
+      background: rgba(59, 130, 246, 0.12);
+      color: #60a5fa;
+    }
+    .feature-icon.icon-emerald {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+    }
+    .feature-icon.icon-amber {
+      background: rgba(245, 158, 11, 0.12);
+      color: #fbbf24;
+    }
+
+    .feature-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* --- Stats Section --- */
+    .stats-section {
+      padding: 5rem 0;
+      position: relative;
+    }
+
+    .stats-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.03), transparent);
+      pointer-events: none;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .stat-number {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    /* --- CTA Section --- */
+    .cta-section {
+      padding: 6rem 0;
+    }
+
+    .cta-box {
+      background: rgba(99, 102, 241, 0.06);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      border-radius: 24px;
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-box::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .cta-subtitle {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+
+    /* --- Landing Navbar --- */
+    .landing-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 0;
+      transition: all 0.35s ease;
+    }
+
+    .landing-nav.scrolled {
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.7rem 0;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.25rem;
+      text-decoration: none;
+    }
+
+    .nav-brand:hover { color: #fff; }
+
+    .nav-brand i {
+      font-size: 1.6rem;
+      color: var(--accent-color);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-link-item {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link-item:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-nav-login {
+      padding: 0.55rem 1.5rem;
+      border-radius: 10px;
+      background: var(--gradient-primary);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 12px rgba(99, 102, 241, 0.25);
+    }
+
+    .btn-nav-login:hover {
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    /* --- Footer --- */
+    .landing-footer {
+      border-top: 1px solid var(--border-color);
+      padding: 2rem 0;
+    }
+
+    .landing-footer .footer-text {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .landing-footer a {
+      color: var(--text-secondary);
+      transition: color 0.2s;
+    }
+
+    .landing-footer a:hover {
+      color: var(--accent-color);
+    }
+
+    /* --- Scroll Reveal --- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="landing-page">
+
+  <!-- Fixed Navbar -->
+  <nav class="landing-nav" id="landingNav">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="{% url 'root_landing' %}" class="nav-brand">
+        <i class="bi bi-book-half"></i>
+        <span>Lumina Portal</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features" class="nav-link-item d-none d-sm-inline-block">Features</a>
+        <a href="#stats" class="nav-link-item d-none d-sm-inline-block">About</a>
+        <a href="{% url 'accounts:login' %}" class="btn-nav-login">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Login
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="landing-hero">
+    <div class="grid-overlay"></div>
+
+    <!-- Floating particles generated by JS -->
+    <div class="particles" id="particles"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="bi bi-stars"></i>
+        Modern Digital Library Platform
+      </div>
+
+      <h1 class="hero-title text-white">
+        Discover. Borrow.<br>
+        <span class="gradient-text">Read Without Limits.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Lumina Portal brings your library into the digital age — browse thousands of titles,
+        borrow instantly, and manage your reading journey from anywhere.
+      </p>
+
+      <div class="hero-cta">
+        <a href="{% url 'accounts:register' %}" class="btn-hero-primary" id="hero-register-btn">
+          <i class="bi bi-person-plus"></i> Get Started Free
+        </a>
+        <a href="{% url 'accounts:login' %}" class="btn-hero-secondary" id="hero-login-btn">
+          <i class="bi bi-box-arrow-in-right"></i> Member Login
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+      <a href="#features"><i class="bi bi-chevron-double-down"></i></a>
+    </div>
+  </section>
+
+  <!-- ========== FEATURES SECTION ========== -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="section-label">
+          <i class="bi bi-lightning-charge-fill"></i> Why Lumina
+        </div>
+        <h2 class="section-title text-white">Everything Your Library Needs</h2>
+        <p class="section-subtitle">
+          A powerful, all-in-one platform built for modern libraries and their readers.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Feature 1 -->
+        <div class="col-md-6 col-lg-3 reveal">
+          <div class="feature-card">
+            <div class="feature-icon icon-indigo">
+              <i class="bi bi-search"></i>
+            </div>
+            <h3 class="feature-title text-white">Digital Catalogue</h3>
+            <p class="feature-desc">
+              Browse, search, and filter through a rich catalogue of books with advanced metadata and genre classification.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="col-md-6 col-lg-3 reveal">
+          <div class="feature-card">
+            <div class="feature-icon icon-blue">
+              <i class="bi bi-arrow-left-right"></i>
+            </div>
+            <h3 class="feature-title text-white">Smart Circulation</h3>
+            <p class="feature-desc">
+              Seamless borrowing and returns with automated due-date tracking, overdue alerts, and renewal management.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="col-md-6 col-lg-3 reveal">
+          <div class="feature-card">
+            <div class="feature-icon icon-emerald">
+              <i class="bi bi-person-badge"></i>
+            </div>
+            <h3 class="feature-title text-white">Member Portal</h3>
+            <p class="feature-desc">
+              Personalized dashboards for every member — track loans, view history, and manage your reading profile.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="col-md-6 col-lg-3 reveal">
+          <div class="feature-card">
+            <div class="feature-icon icon-amber">
+              <i class="bi bi-bar-chart-line"></i>
+            </div>
+            <h3 class="feature-title text-white">Reports & Analytics</h3>
+            <p class="feature-desc">
+              Real-time insights on collection usage, member activity, and circulation trends with exportable reports.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== STATS SECTION ========== -->
+  <section class="stats-section" id="stats">
+    <div class="container">
+      <div class="row reveal">
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Books Available</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <div class="stat-number">2.5K</div>
+            <div class="stat-label">Active Members</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Authors Listed</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <div class="stat-number">99.9%</div>
+            <div class="stat-label">Uptime</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA SECTION ========== -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box reveal">
+        <h2 class="cta-title text-white">Ready to Start Your Reading Journey?</h2>
+        <p class="cta-subtitle">
+          Create a free account and unlock access to the entire Lumina library collection.
+        </p>
+        <div class="hero-cta" style="opacity: 1;">
+          <a href="{% url 'accounts:register' %}" class="btn-hero-primary" id="cta-register-btn">
+            <i class="bi bi-rocket-takeoff"></i> Join Lumina Now
+          </a>
+          <a href="{% url 'accounts:login' %}" class="btn-hero-secondary" id="cta-login-btn">
+            <i class="bi bi-box-arrow-in-right"></i> Sign In
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+        <div class="footer-text">
+          &copy; 2026 Lumina Library Portal. All Rights Reserved.
+        </div>
+        <div class="d-flex gap-3">
+          <a href="#" class="footer-text">Terms</a>
+          <span class="footer-text opacity-25">|</span>
+          <a href="#" class="footer-text">Privacy</a>
+          <span class="footer-text opacity-25">|</span>
+          <a href="{% url 'accounts:login' %}" class="footer-text">Login</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      // --- Navbar scroll effect ---
+      const nav = document.getElementById("landingNav");
+      window.addEventListener("scroll", function () {
+        nav.classList.toggle("scrolled", window.scrollY > 60);
+      });
+
+      // --- Generate floating particles ---
+      const particlesContainer = document.getElementById("particles");
+      const colors = [
+        "rgba(99, 102, 241, 0.4)",
+        "rgba(59, 130, 246, 0.35)",
+        "rgba(139, 92, 246, 0.3)",
+        "rgba(99, 102, 241, 0.25)"
+      ];
+
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement("div");
+        p.classList.add("particle");
+        const size = Math.random() * 4 + 2;
+        p.style.width = size + "px";
+        p.style.height = size + "px";
+        p.style.left = Math.random() * 100 + "%";
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.animationDuration = (Math.random() * 15 + 10) + "s";
+        p.style.animationDelay = (Math.random() * 10) + "s";
+        particlesContainer.appendChild(p);
+      }
+
+      // --- Scroll reveal animation ---
+      const revealElements = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      }, { threshold: 0.15 });
+
+      revealElements.forEach(function (el) {
+        observer.observe(el);
+      });
+
+      // --- Smooth scroll for anchor links ---
+      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

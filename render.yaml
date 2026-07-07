@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: libraryportal
+    env: python
+    runtime: python-3.12.3
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn LibraryPortal.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: librarydb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CREATE_SUPERUSER_USERNAME
+        value: "admin"
+      - key: CREATE_SUPERUSER_EMAIL
+        value: "admin@example.com"
+      - key: CREATE_SUPERUSER_PASSWORD
+        value: "AdminPassword123"
+
+databases:
+  - name: librarydb
+    plan: free

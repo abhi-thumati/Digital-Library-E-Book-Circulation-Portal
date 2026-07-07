@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lumina | Admin Dashboard{% endblock %}
+
+{% block active_admin_dash %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">Librarian Portal</span> / <span class="text-white">Admin Dashboard</span>
+{% endblock %}
+
+{% block content %}
+<!-- Welcome Header Banner -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card glass-card p-4 shadow-sm border-opacity-10 border-white stat-card-glow">
+      <div class="d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-flex align-items-center justify-content-center border border-primary border-opacity-25" style="width: 60px; height: 60px;">
+          <i class="bi bi-person-workspace text-primary fs-3"></i>
+        </div>
+        <div>
+          <h4 class="text-white fw-bold m-0">Welcome, {{ user.first_name|default:user.username }}!</h4>
+          <p class="text-secondary small m-0">Portal administrator and circulation control console active.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stat Cards Grid -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-4">
+  <!-- Total Books -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Total Books</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">{{ total_books }}</h2>
+      </div>
+      <div class="rounded-3 bg-primary bg-opacity-10 p-3 text-primary">
+        <i class="bi bi-journal-album fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Available Books -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Available Copies</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">{{ available_books }}</h2>
+      </div>
+      <div class="rounded-3 bg-success bg-opacity-10 p-3 text-success">
+        <i class="bi bi-journal-check fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issued Books -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Issued Books</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">{{ issued_books }}</h2>
+      </div>
+      <div class="rounded-3 bg-warning bg-opacity-10 p-3 text-warning">
+        <i class="bi bi-journal-arrow-up fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Members -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Total Members</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">{{ total_members }}</h2>
+      </div>
+      <div class="rounded-3 bg-info bg-opacity-10 p-3 text-info">
+        <i class="bi bi-people fs-3"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-4">
+  <!-- Today's Issues -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Today's Issues</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">{{ today_issues }}</h2>
+      </div>
+      <div class="rounded-3 bg-secondary bg-opacity-25 p-3 text-white">
+        <i class="bi bi-calendar-event fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Returns -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Today's Returns</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">{{ today_returns }}</h2>
+      </div>
+      <div class="rounded-3 bg-primary bg-opacity-10 p-3 text-primary">
+        <i class="bi bi-arrow-return-left fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overdue Books -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Overdue Books</div>
+        <h2 class="text-white fw-bold mt-1 mb-0 text-danger">{{ overdue_books }}</h2>
+      </div>
+      <div class="rounded-3 bg-danger bg-opacity-10 p-3 text-danger">
+        <i class="bi bi-exclamation-octagon fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Fine -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Fines Collected</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">₹{{ total_fine|floatformat:2 }}</h2>
+      </div>
+      <div class="rounded-3 bg-success bg-opacity-10 p-3 text-success">
+        <i class="bi bi-currency-rupee fs-3"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detailed analytics and recent operations -->
+<div class="row">
+  <!-- Analytics Chart Space (Placeholder for Phase 8) -->
+  <div class="col-lg-8 mb-4">
+    <div class="card glass-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+        <h5 class="text-white fw-bold m-0"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Circulation Trends</h5>
+        <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-50">Analytics Mode</span>
+      </div>
+      
+      <div class="d-flex flex-column align-items-center justify-content-center py-5">
+        <i class="bi bi-bar-chart-line text-secondary opacity-25 fs-1 mb-3"></i>
+        <p class="text-secondary text-center small mb-0">Interactive Charts loading from database analytics.</p>
+        <p class="text-secondary text-center" style="font-size: 0.75rem;">Phase 8 implementation will enable dynamic graphs and statistics.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activities Panel -->
+  <div class="col-lg-4 mb-4">
+    <div class="card glass-card p-4 h-100">
+      <h5 class="text-white fw-bold border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+        <i class="bi bi-activity text-primary me-2"></i>Recent Activity
+      </h5>
+      
+      <ul class="list-unstyled mb-0">
+        {% for activity in recent_activities %}
+          <li class="d-flex gap-3 mb-3">
+            <div class="activity-icon rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center text-white" style="width: 32px; height: 32px; flex-shrink: 0;">
+              <i class="bi bi-info-circle small"></i>
+            </div>
+            <div>
+              <p class="text-white small m-0">{{ activity.description }}</p>
+              <small class="text-secondary" style="font-size: 0.70rem;">{{ activity.timestamp|date:"M d, H:i" }}</small>
+            </div>
+          </li>
+        {% empty %}
+          <div class="text-center py-4 text-secondary small">
+            <i class="bi bi-card-list fs-2 opacity-25 d-block mb-2"></i>
+            No recent portal activities.
+          </div>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

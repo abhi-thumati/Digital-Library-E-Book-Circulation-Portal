@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Lumina | {% if form.instance.pk %}Edit Genre{% else %}Create Genre{% endif %}
+{% endblock %}
+
+{% block active_books %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">Catalogue</span> / <a href="{% url 'books:book_list' %}" class="text-secondary">Books</a> / <a href="{% url 'books:genre_list' %}" class="text-secondary">Genres</a> / <span class="text-white">{% if form.instance.pk %}Edit{% else %}Create{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card glass-card p-4 shadow-lg mb-4">
+      <div class="border-bottom border-secondary border-opacity-25 pb-3 mb-4">
+        <h3 class="text-white fw-bold m-0">
+          <i class="bi {% if form.instance.pk %}bi-pencil-square{% else %}bi-tag{% endif %} text-primary me-2"></i>
+          {% if form.instance.pk %}Modify Genre Details{% else %}Create New Genre{% endif %}
+        </h3>
+        <p class="text-secondary small m-0">Define the literary genre scope and description below.</p>
+      </div>
+
+      <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <!-- Non field errors -->
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger bg-danger bg-opacity-10 border border-danger border-opacity-20 text-danger small mb-4" role="alert">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Genre Name -->
+        <div class="mb-3">
+          <label for="{{ form.name.id_for_label }}" class="form-label text-white small fw-semibold">Genre Name</label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="text-danger small mt-1">{% for error in form.name.errors %}{{ error }}{% endfor %}</div>
+          {% endif %}
+          <div class="form-text text-secondary small">{{ form.name.help_text }}</div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="{{ form.description.id_for_label }}" class="form-label text-white small fw-semibold">Description</label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <div class="text-danger small mt-1">{% for error in form.description.errors %}{{ error }}{% endfor %}</div>
+          {% endif %}
+          <div class="form-text text-secondary small">{{ form.description.help_text }}</div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="d-flex justify-content-end gap-2 border-top border-secondary border-opacity-10 pt-4">
+          <a href="{% url 'books:genre_list' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+          <button type="submit" class="btn btn-primary px-5">Save Genre</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

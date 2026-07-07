@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lumina | {{ book.title }}{% endblock %}
+
+{% block active_books %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">Catalogue</span> / <a href="{% url 'books:book_list' %}" class="text-secondary">Books</a> / <span class="text-white">Detail</span>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <!-- Book Cover and Core Status Card -->
+  <div class="col-lg-4 mb-4">
+    <div class="card glass-card p-4 text-center h-100 d-flex flex-column justify-content-between">
+      <div>
+        <!-- Book Cover / Placeholder -->
+        <div class="rounded border border-secondary border-opacity-25 overflow-hidden mx-auto mb-4 bg-dark shadow" style="width: 200px; height: 300px;">
+          {% if book.cover_image %}
+            <img src="{{ book.cover_image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ book.title }}">
+          {% else %}
+            <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-3" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+              <i class="bi bi-book-half text-secondary opacity-50 fs-1 mb-3"></i>
+              <span class="text-secondary small">No Cover Uploaded</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <h4 class="text-white fw-bold mb-1">{{ book.title }}</h4>
+        <p class="text-secondary mb-3">
+          by 
+          {% for author in book.authors.all %}
+            <a href="{% url 'authors:author_detail' author.pk %}" class="text-primary hover-white fw-medium">{{ author.name }}</a>{% if not forloop.last %}, {% endif %}
+          {% empty %}
+            <span class="text-muted">Unknown Author</span>
+          {% endfor %}
+        </p>
+
+        <!-- Availability Details -->
+        <div class="d-flex justify-content-center gap-2 mb-4">
+          {% if book.available_copies > 0 %}
+            <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">
+              <i class="bi bi-check-circle-fill me-1"></i> Available ({{ book.available_copies }} copies left)
+            </span>
+          {% else %}
+            <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill">
+              <i class="bi bi-exclamation-triangle-fill me-1"></i> All Copies Issued
+            </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Action Panel -->
+      <div class="border-top border-secondary border-opacity-25 pt-4">
+        {% if user.is_librarian_or_admin %}
+          <div class="d-grid gap-2">
+            <a href="{% url 'circulation:issue_book' %}?book={{ book.id }}" class="btn btn-primary">
+              <i class="bi bi-arrow-left-right me-1"></i> Issue Book
+            </a>
+            <div class="row g-2">
+              <div class="col-6">
+                <a href="{% url 'books:book_update' book.pk %}" class="btn btn-outline-info w-100">
+                  <i class="bi bi-pencil me-1"></i> Edit
+                </a>
+              </div>
+              <div class="col-6">
+                <a href="{% url 'books:book_delete' book.pk %}" class="btn btn-outline-danger w-100">
+                  <i class="bi bi-trash me-1"></i> Delete
+                </a>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <!-- Member Actions -->
+          {% if active_loan %}
+            <div class="glass-panel border-primary border-opacity-20 p-3 bg-primary bg-opacity-5 rounded mb-3 text-start">
+              <h6 class="text-white fw-bold mb-2 small"><i class="bi bi-info-circle text-primary me-2"></i>You have borrowed this book</h6>
+              <div class="text-secondary small mb-2">Issued on: <strong>{{ active_loan.borrow_date }}</strong></div>
+              <div class="text-secondary small mb-3">Due date: <strong class="text-white">{{ active_loan.due_date }}</strong></div>
+              
+              {% if active_loan.renew_count < 1 %}
+                <form action="{% url 'circulation:renew_book' active_loan.pk %}" method="post" class="d-grid">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-arrow-repeat me-1"></i> Renew Borrowing</button>
+                </form>
+              {% else %}
+                <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-50 w-100 py-2">Maximum renewals reached</span>
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="text-secondary small text-center p-2 border border-secondary border-opacity-10 rounded">
+              <i class="bi bi-info-circle me-1"></i> Please visit the library checkout desk to borrow this book.
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Metadata and Synopsis -->
+  <div class="col-lg-8 mb-4">
+    <div class="card glass-card p-4 h-100">
+      <h5 class="text-white fw-bold border-bottom border-secondary border-opacity-25 pb-3 mb-4">
+        <i class="bi bi-file-earmark-text text-primary me-2"></i>Book Metadata & Description
+      </h5>
+
+      <!-- Info Grid -->
+      <div class="row mb-4">
+        <div class="col-sm-6 mb-3">
+          <span class="text-secondary small d-block">ISBN</span>
+          <strong class="text-white fs-6"><code>{{ book.isbn }}</code></strong>
+        </div>
+        <div class="col-sm-6 mb-3">
+          <span class="text-secondary small d-block">Publisher</span>
+          <strong class="text-white fs-6">{{ book.publisher|default:"Not specified" }}</strong>
+        </div>
+        <div class="col-sm-6 mb-3">
+          <span class="text-secondary small d-block">Publication Date</span>
+          <strong class="text-white fs-6">{{ book.publication_date|date:"F d, Y"|default:"Not specified" }}</strong>
+        </div>
+        <div class="col-sm-6 mb-3">
+          <span class="text-secondary small d-block">Cataloged On</span>
+          <strong class="text-white fs-6">{{ book.created_at|date:"M d, Y" }}</strong>
+        </div>
+      </div>
+
+      <!-- Genres -->
+      <div class="mb-4">
+        <span class="text-secondary small d-block mb-2">Associated Genres</span>
+        <div class="d-flex flex-wrap gap-2">
+          {% for genre in book.genres.all %}
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 py-2 px-3 fs-7">
+              <i class="bi bi-tag me-1"></i>{{ genre.name }}
+            </span>
+          {% empty %}
+            <span class="text-secondary small">No genres specified.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Description / Synopsis -->
+      <div class="mb-4">
+        <span class="text-secondary small d-block border-bottom border-secondary border-opacity-10 pb-2 mb-2">Synopsis</span>
+        <div class="text-secondary leading-relaxed" style="white-space: pre-wrap;">
+          {{ book.description|default:"No synopsis or summary has been written for this catalog entry." }}
+        </div>
+      </div>
+
+      <!-- Authors Biography brief -->
+      <div>
+        <span class="text-secondary small d-block border-bottom border-secondary border-opacity-10 pb-2 mb-3">About the Authors</span>
+        {% for author in book.authors.all %}
+          <div class="p-3 bg-secondary bg-opacity-5 rounded border border-secondary border-opacity-10 mb-3">
+            <h6 class="text-white fw-bold mb-1">{{ author.name }}</h6>
+            <p class="text-secondary small mb-0">{{ author.biography|default:"No biography written."|truncatewords:40 }}</p>
+            <a href="{% url 'authors:author_detail' author.pk %}" class="small text-primary mt-2 d-inline-block hover-white">View Full Profile &raquo;</a>
+          </div>
+        {% empty %}
+          <p class="text-secondary small mb-0">No author profile available.</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

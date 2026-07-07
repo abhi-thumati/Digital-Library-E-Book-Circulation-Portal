@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lumina | Genres Directory{% endblock %}
+
+{% block active_books %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">Catalogue</span> / <a href="{% url 'books:book_list' %}" class="text-secondary">Books</a> / <span class="text-white">Genres</span>
+{% endblock %}
+
+{% block content %}
+<div class="card glass-card p-4 shadow-lg mb-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+    <div>
+      <h3 class="text-white fw-bold m-0"><i class="bi bi-tags text-primary me-2"></i>Genres Registry</h3>
+      <p class="text-secondary small m-0">Create and modify genres catalogued inside the digital portal.</p>
+    </div>
+    
+    <a href="{% url 'books:genre_create' %}" class="btn btn-primary px-4 py-2.5 rounded">
+      <i class="bi bi-tag-fill me-1"></i> Create Genre
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>Genre Name</th>
+          <th>Description Outline</th>
+          <th class="text-center">Cataloged Books</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for genre in genres %}
+          <tr>
+            <td>
+              <strong class="text-white">{{ genre.name }}</strong>
+            </td>
+            <td>
+              <span class="text-secondary small">{{ genre.description|default:"No description recorded."|truncatewords:15 }}</span>
+            </td>
+            <td class="text-center">
+              <!-- Dynamically calculate the number of books in the genre -->
+              <span class="badge badge-glass">{{ genre.books.count }}</span>
+            </td>
+            <td class="text-end">
+              <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'books:genre_update' genre.pk %}" class="btn btn-sm btn-outline-info" title="Edit Genre">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'books:genre_delete' genre.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Genre">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="text-center py-5 text-secondary">
+              <i class="bi bi-tag fs-1 opacity-25 d-block mb-3"></i>
+              No genres registered.
+              <a href="{% url 'books:genre_create' %}" class="btn btn-primary btn-sm ms-2 py-1 px-3">Add Genre</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+    <nav class="d-flex justify-content-center mt-4">
+      <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary border-opacity-25" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link bg-primary border-primary text-white">{{ num }}</span></li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link bg-dark text-white border-secondary border-opacity-25" href="?page={{ num }}">{{ num }}</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link bg-dark text-white border-secondary border-opacity-25" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

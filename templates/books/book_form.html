@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Lumina | {% if form.instance.pk %}Edit Book Details{% else %}Catalog New Book{% endif %}
+{% endblock %}
+
+{% block active_books %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">Catalogue</span> / <a href="{% url 'books:book_list' %}" class="text-secondary">Books</a> / <span class="text-white">{% if form.instance.pk %}Edit{% else %}Add{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card glass-card p-4 shadow-lg mb-4">
+      <div class="border-bottom border-secondary border-opacity-25 pb-3 mb-4">
+        <h3 class="text-white fw-bold m-0">
+          <i class="bi {% if form.instance.pk %}bi-pencil-square{% else %}bi-plus-circle{% endif %} text-primary me-2"></i>
+          {% if form.instance.pk %}Modify Catalog Entry{% else %}Catalog New Book Entry{% endif %}
+        </h3>
+        <p class="text-secondary small m-0">Fill out the metadata details below to catalog the book.</p>
+      </div>
+
+      <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <!-- Non field errors -->
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger bg-danger bg-opacity-10 border border-danger border-opacity-20 text-danger small mb-4" role="alert">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Book Title -->
+        <div class="mb-3">
+          <label for="{{ form.title.id_for_label }}" class="form-label text-white small fw-semibold">Book Title</label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <div class="text-danger small mt-1">{% for error in form.title.errors %}{{ error }}{% endfor %}</div>
+          {% endif %}
+          <div class="form-text text-secondary small">{{ form.title.help_text }}</div>
+        </div>
+
+        <!-- Authors (Multi-select) -->
+        <div class="mb-3">
+          <label for="{{ form.authors.id_for_label }}" class="form-label text-white small fw-semibold">Authors</label>
+          {{ form.authors }}
+          {% if form.authors.errors %}
+            <div class="text-danger small mt-1">{% for error in form.authors.errors %}{{ error }}{% endfor %}</div>
+          {% endif %}
+          <div class="form-text text-secondary small">{{ form.authors.help_text }} (Hold <kbd class="bg-dark text-white">Ctrl</kbd> to select multiple)</div>
+        </div>
+
+        <!-- Genres (Multi-select) -->
+        <div class="mb-3">
+          <label for="{{ form.genres.id_for_label }}" class="form-label text-white small fw-semibold">Genres</label>
+          {{ form.genres }}
+          {% if form.genres.errors %}
+            <div class="text-danger small mt-1">{% for error in form.genres.errors %}{{ error }}{% endfor %}</div>
+          {% endif %}
+          <div class="form-text text-secondary small">{{ form.genres.help_text }} (Hold <kbd class="bg-dark text-white">Ctrl</kbd> to select multiple)</div>
+        </div>
+
+        <div class="row">
+          <!-- ISBN -->
+          <div class="col-md-6 mb-3">
+            <label for="{{ form.isbn.id_for_label }}" class="form-label text-white small fw-semibold">ISBN</label>
+            {{ form.isbn }}
+            {% if form.isbn.errors %}
+              <div class="text-danger small mt-1">{% for error in form.isbn.errors %}{{ error }}{% endfor %}</div>
+            {% endif %}
+            <div class="form-text text-secondary small">{{ form.isbn.help_text }}</div>
+          </div>
+
+          <!-- Publication Date -->
+          <div class="col-md-6 mb-3">
+            <label for="{{ form.publication_date.id_for_label }}" class="form-label text-white small fw-semibold">Publication Date</label>
+            {{ form.publication_date }}
+            {% if form.publication_date.errors %}
+              <div class="text-danger small mt-1">{% for error in form.publication_date.errors %}{{ error }}{% endfor %}</div>
+            {% endif %}
+            <div class="form-text text-secondary small">{{ form.publication_date.help_text }}</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Publisher -->
+          <div class="col-md-6 mb-3">
+            <label for="{{ form.publisher.id_for_label }}" class="form-label text-white small fw-semibold">Publisher</label>
+            {{ form.publisher }}
+            {% if form.publisher.errors %}
+              <div class="text-danger small mt-1">{% for error in form.publisher.errors %}{{ error }}{% endfor %}</div>
+            {% endif %}
+            <div class="form-text text-secondary small">{{ form.publisher.help_text }}</div>
+          </div>
+
+          <!-- Total Copies -->
+          <div class="col-md-6 mb-3">
+            <label for="{{ form.total_copies.id_for_label }}" class="form-label text-white small fw-semibold">Total Copies</label>
+            {{ form.total_copies }}
+            {% if form.total_copies.errors %}
+              <div class="text-danger small mt-1">{% for error in form.total_copies.errors %}{{ error }}{% endfor %}</div>
+            {% endif %}
+            <div class="form-text text-secondary small">{{ form.total_copies.help_text }}</div>
+          </div>
+        </div>
+
+        <!-- Cover Image -->
+        <div class="mb-3">
+          <label for="{{ form.cover_image.id_for_label }}" class="form-label text-white small fw-semibold">Cover Image</label>
+          {{ form.cover_image }}
+          {% if form.cover_image.errors %}
+            <div class="text-danger small mt-1">{% for error in form.cover_image.errors %}{{ error }}{% endfor %}</div>
+          {% endif %}
+          <div class="form-text text-secondary small">{{ form.cover_image.help_text }}</div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="{{ form.description.id_for_label }}" class="form-label text-white small fw-semibold">Synopsis / Description</label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <div class="text-danger small mt-1">{% for error in form.description.errors %}{{ error }}{% endfor %}</div>
+          {% endif %}
+          <div class="form-text text-secondary small">{{ form.description.help_text }}</div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="d-flex justify-content-end gap-2 border-top border-secondary border-opacity-10 pt-4">
+          <a href="{% url 'books:book_list' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+          <button type="submit" class="btn btn-primary px-5">Save Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

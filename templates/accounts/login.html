@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lumina | Login{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">Authentication</span> / <span class="text-white">Login</span>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 160px);">
+  <div class="col-md-5 col-lg-4">
+    <!-- Login Card -->
+    <div class="card glass-card p-4 shadow-lg border-opacity-10 border-white">
+      <div class="text-center mb-4">
+        <i class="bi bi-shield-lock-fill text-primary fs-1"></i>
+        <h3 class="text-white fw-bold mt-2">Access Portal</h3>
+        <p class="text-secondary small">Enter credentials to access your dashboard</p>
+      </div>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        
+        <!-- Username Field -->
+        <div class="mb-3">
+          <label for="id_username" class="form-label text-secondary small fw-medium">Username</label>
+          <div class="input-group">
+            <span class="input-group-text bg-dark border-secondary text-secondary border-opacity-25">
+              <i class="bi bi-person"></i>
+            </span>
+            <input type="text" name="username" autofocus required id="id_username" 
+                   class="form-control bg-dark text-white border-secondary border-opacity-25 py-2" 
+                   placeholder="Enter username">
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="mb-4">
+          <label for="id_password" class="form-label text-secondary small fw-medium">Password</label>
+          <div class="input-group">
+            <span class="input-group-text bg-dark border-secondary text-secondary border-opacity-25">
+              <i class="bi bi-key"></i>
+            </span>
+            <input type="password" name="password" required id="id_password" 
+                   class="form-control bg-dark text-white border-secondary border-opacity-25 py-2" 
+                   placeholder="Enter password">
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100 py-2.5 mb-3">
+          <i class="bi bi-box-arrow-in-right me-2"></i> Log In
+        </button>
+
+        <div class="text-center mt-3">
+          <span class="text-secondary small">New user? </span>
+          <a href="{% url 'accounts:register' %}" class="small fw-semibold text-decoration-none">Register Member</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

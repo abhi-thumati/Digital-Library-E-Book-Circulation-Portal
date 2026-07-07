@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lumina | Portal Reports{% endblock %}
+
+{% block active_reports %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">Librarian Portal</span> / <span class="text-white">Reports Console</span>
+{% endblock %}
+
+{% block content %}
+<!-- Welcome Header Banner -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card glass-card p-4 shadow-sm border-opacity-10 border-white stat-card-glow">
+      <div class="d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-flex align-items-center justify-content-center border border-primary border-opacity-25" style="width: 60px; height: 60px;">
+          <i class="bi bi-file-earmark-bar-graph text-primary fs-3"></i>
+        </div>
+        <div>
+          <h4 class="text-white fw-bold m-0">Portal Reports Console</h4>
+          <p class="text-secondary small m-0">Generate and export system audit logs, active circulation sheets, and inventory indexes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stat Cards Grid -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-4">
+  <!-- Total Books -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Catalogued Copies</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">{{ total_books }}</h2>
+      </div>
+      <div class="rounded-3 bg-primary bg-opacity-10 p-3 text-primary">
+        <i class="bi bi-journal-album fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Loans -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Active Borrowings</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">{{ active_loans_count }}</h2>
+      </div>
+      <div class="rounded-3 bg-warning bg-opacity-10 p-3 text-warning">
+        <i class="bi bi-arrow-left-right fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overdue Items -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Overdue Items</div>
+        <h2 class="text-white fw-bold mt-1 mb-0 text-danger">{{ overdue_loans_count }}</h2>
+      </div>
+      <div class="rounded-3 bg-danger bg-opacity-10 p-3 text-danger">
+        <i class="bi bi-exclamation-octagon fs-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unpaid Fines -->
+  <div class="col">
+    <div class="card glass-card h-100 p-4 d-flex flex-row align-items-center justify-content-between">
+      <div>
+        <div class="text-secondary small fw-medium uppercase">Outstanding Fines</div>
+        <h2 class="text-white fw-bold mt-1 mb-0">₹{{ total_unpaid_fines|floatformat:2 }}</h2>
+      </div>
+      <div class="rounded-3 bg-success bg-opacity-10 p-3 text-success">
+        <i class="bi bi-currency-rupee fs-3"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Report Export Selection -->
+<div class="row">
+  <!-- Book Inventory Card -->
+  <div class="col-lg-4 mb-4">
+    <div class="card glass-card p-4 h-100 d-flex flex-column justify-content-between shadow">
+      <div>
+        <div class="d-flex align-items-center gap-3 border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+          <div class="rounded bg-primary bg-opacity-10 p-2.5 text-primary">
+            <i class="bi bi-journals fs-4"></i>
+          </div>
+          <h5 class="text-white fw-bold m-0">Book Inventory</h5>
+        </div>
+        <p class="text-secondary small mb-4">
+          Contains a complete index of all registered books, including details on authors, genres, ISBNs, publishers, and available vs. total counts.
+        </p>
+      </div>
+      <div class="d-flex flex-column gap-2">
+        <a href="{% url 'dashboard:export_report' 'books' 'pdf' %}" class="btn btn-outline-light d-flex align-items-center justify-content-center gap-2 py-2.5">
+          <i class="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
+          <span>Download PDF Index</span>
+        </a>
+        <a href="{% url 'dashboard:export_report' 'books' 'excel' %}" class="btn btn-outline-success d-flex align-items-center justify-content-center gap-2 py-2.5">
+          <i class="bi bi-file-earmark-excel-fill text-success fs-5"></i>
+          <span>Download Excel Sheet</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Loans Card -->
+  <div class="col-lg-4 mb-4">
+    <div class="card glass-card p-4 h-100 d-flex flex-column justify-content-between shadow">
+      <div>
+        <div class="d-flex align-items-center gap-3 border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+          <div class="rounded bg-warning bg-opacity-10 p-2.5 text-warning">
+            <i class="bi bi-calendar-check fs-4"></i>
+          </div>
+          <h5 class="text-white fw-bold m-0">Active Loans</h5>
+        </div>
+        <p class="text-secondary small mb-4">
+          Contains a live register of all active borrowings. Includes borrower accounts, checkout dates, due dates, renewal metrics, and time left.
+        </p>
+      </div>
+      <div class="d-flex flex-column gap-2">
+        <a href="{% url 'dashboard:export_report' 'loans' 'pdf' %}" class="btn btn-outline-light d-flex align-items-center justify-content-center gap-2 py-2.5">
+          <i class="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
+          <span>Download PDF Index</span>
+        </a>
+        <a href="{% url 'dashboard:export_report' 'loans' 'excel' %}" class="btn btn-outline-success d-flex align-items-center justify-content-center gap-2 py-2.5">
+          <i class="bi bi-file-earmark-excel-fill text-success fs-5"></i>
+          <span>Download Excel Sheet</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overdue & Fines Card -->
+  <div class="col-lg-4 mb-4">
+    <div class="card glass-card p-4 h-100 d-flex flex-column justify-content-between shadow">
+      <div>
+        <div class="d-flex align-items-center gap-3 border-bottom border-secondary border-opacity-25 pb-3 mb-3">
+          <div class="rounded bg-danger bg-opacity-10 p-2.5 text-danger">
+            <i class="bi bi-exclamation-octagon fs-4"></i>
+          </div>
+          <h5 class="text-white fw-bold m-0">Overdue & Fines</h5>
+        </div>
+        <p class="text-secondary small mb-4">
+          Contains details of accounts with overdue loans and active/unpaid penalties. Shows fine totals and days past due date.
+        </p>
+      </div>
+      <div class="d-flex flex-column gap-2">
+        <a href="{% url 'dashboard:export_report' 'fines' 'pdf' %}" class="btn btn-outline-light d-flex align-items-center justify-content-center gap-2 py-2.5">
+          <i class="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
+          <span>Download PDF Index</span>
+        </a>
+        <a href="{% url 'dashboard:export_report' 'fines' 'excel' %}" class="btn btn-outline-success d-flex align-items-center justify-content-center gap-2 py-2.5">
+          <i class="bi bi-file-earmark-excel-fill text-success fs-5"></i>
+          <span>Download Excel Sheet</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

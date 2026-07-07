@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lumina | My Borrowings{% endblock %}
+
+{% block active_member_history %}active{% endblock %}
+
+{% block breadcrumbs %}
+  <span class="text-secondary">My Portal</span> / <span class="text-white">Borrowing History</span>
+{% endblock %}
+
+{% block content %}
+<!-- Active Borrowings Section -->
+<div class="card glass-card p-4 shadow-lg mb-4">
+  <div class="border-bottom border-secondary border-opacity-25 pb-3 mb-4">
+    <h3 class="text-white fw-bold m-0"><i class="bi bi-book-half text-primary me-2"></i>My Active Borrowings</h3>
+    <p class="text-secondary small m-0">Library books currently checked out in your name.</p>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>Book Title</th>
+          <th>Borrow Date</th>
+          <th>Due Date</th>
+          <th>Status / Days Left</th>
+          <th>Fine</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in active_loans %}
+          <tr>
+            <td>
+              <a href="{% url 'books:book_detail' loan.book.pk %}" class="text-white fw-bold hover-white d-block">{{ loan.book.title }}</a>
+              <small class="text-secondary">ISBN: {{ loan.book.isbn }}</small>
+            </td>
+            <td>{{ loan.borrow_date|date:"d M Y" }}</td>
+            <td>{{ loan.due_date|date:"d M Y" }}</td>
+            <td>
+              {% if loan.days_left < 0 %}
+                <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-25 py-1 px-2.5 rounded-pill">
+                  Overdue ({{ loan.days_left|stringformat:"d"|slice:"1:" }} days late)
+                </span>
+              {% else %}
+                <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25 py-1 px-2.5 rounded-pill">
+                  {{ loan.days_left }} Days Left
+                </span>
+              {% endif %}
+            </td>
+            <td>
+              {% if loan.fine_amount > 0 %}
+                <strong class="text-danger">₹{{ loan.fine_amount|floatformat:2 }}</strong>
+              {% else %}
+                <span class="text-secondary">-</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              {% if loan.renew_count < 1 and loan.status != 'OVERDUE' %}
+                <form action="{% url 'circulation:renew_book' loan.pk %}" method="post" class="m-0">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-arrow-repeat me-1"></i> Renew
+                  </button>
+                </form>
+              {% elif loan.status == 'OVERDUE' %}
+                <span class="text-danger small"><i class="bi bi-exclamation-triangle"></i> Return Late</span>
+              {% else %}
+                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 py-1 px-2 rounded">Renewed</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center py-5 text-secondary">
+              <i class="bi bi-journal-x fs-1 opacity-25 d-block mb-3"></i>
+              You currently have no active checked-out books.
+              <a href="{% url 'books:book_list' %}" class="btn btn-primary btn-sm ms-2 py-1.5 px-3">Browse Catalogue</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Returned Borrowings History Section -->
+<div class="card glass-card p-4 shadow-lg mb-4">
+  <div class="border-bottom border-secondary border-opacity-25 pb-3 mb-4">
+    <h3 class="text-white fw-bold m-0"><i class="bi bi-clock-history text-primary me-2"></i>Borrowing History</h3>
+    <p class="text-secondary small m-0">Archive logs of books you have borrowed and returned in the past.</p>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-custom">
+      <thead>
+        <tr>
+          <th>Book Title</th>
+          <th>Borrow Date</th>
+          <th>Due Date</th>
+          <th>Return Date</th>
+          <th>Status</th>
+          <th>Fine Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in returned_loans %}
+          <tr>
+            <td>
+              <a href="{% url 'books:book_detail' loan.book.pk %}" class="text-white fw-bold hover-white d-block">{{ loan.book.title }}</a>
+              <small class="text-secondary">ISBN: {{ loan.book.isbn }}</small>
+            </td>
+            <td>{{ loan.borrow_date|date:"d M Y" }}</td>
+            <td>{{ loan.due_date|date:"d M Y" }}</td>
+            <td>{{ loan.return_date|date:"d M Y" }}</td>
+            <td>
+              <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-25 py-1 px-2.5 rounded-pill">
+                Returned
+              </span>
+            </td>
+            <td>
+              {% if loan.fine_amount > 0 %}
+                <span class="text-danger fw-semibold">₹{{ loan.fine_amount|floatformat:2 }}</span>
+                {% if loan.fine_paid %}
+                  <span class="badge bg-success bg-opacity-10 text-success ms-1 small" style="font-size: 0.65rem;">Paid</span>
+                {% else %}
+                  <span class="badge bg-danger bg-opacity-10 text-danger ms-1 small" style="font-size: 0.65rem;">Unpaid</span>
+                {% endif %}
+              {% else %}
+                <span class="text-secondary">₹0.00</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center py-5 text-secondary">
+              <i class="bi bi-clock-history fs-1 opacity-25 d-block mb-3"></i>
+              No historical borrow logs.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

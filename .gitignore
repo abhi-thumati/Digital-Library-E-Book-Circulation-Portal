@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
+db.sqlite3
+*.db
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Uploaded Media and collected static files
+media/
+staticfiles/
+
+# Configuration and Secrets
+.env
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS metadata
+Thumbs.db
+desktop.ini
