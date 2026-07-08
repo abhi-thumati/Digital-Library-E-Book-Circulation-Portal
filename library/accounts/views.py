@@ -28,7 +28,7 @@ class UserLoginView(LoginView):
         user = self.request.user
         if user.is_librarian_or_admin:
             return reverse_lazy('dashboard:admin_dashboard')
-        return reverse_lazy('dashboard:member_dashboard')
+        return reverse_lazy('books:book_list')
 
 
 class UserLogoutView(LogoutView):

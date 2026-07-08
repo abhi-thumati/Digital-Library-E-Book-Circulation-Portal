@@ -81,6 +81,44 @@ class IssueBookView(LibrarianRequiredMixin, CreateView):
         return super().form_invalid(form)
 
 
+class MemberIssueBookView(LoginRequiredMixin, View):
+    def post(self, request, book_id, *args, **kwargs):
+        book = get_object_or_404(Book, pk=book_id)
+        user = request.user
+
+        if not user.is_member:
+            messages.error(request, "Only library members may borrow books.")
+            return redirect('books:book_detail', pk=book.pk)
+
+        if book.available_copies <= 0:
+            messages.error(request, "This book is not available for borrowing right now.")
+            return redirect('books:book_detail', pk=book.pk)
+
+        existing_loan = Loan.objects.filter(
+            borrower=user,
+            book=book,
+            return_date__isnull=True
+        ).first()
+        if existing_loan:
+            messages.info(request, "You already have this book checked out.")
+            return redirect('books:book_detail', pk=book.pk)
+
+        due_date = timezone.now().date() + timedelta(days=14)
+        loan = Loan(
+            borrower=user,
+            book=book,
+            due_date=due_date,
+            status='BORROWED',
+        )
+        loan.save()
+
+        book.available_copies = max(0, book.available_copies - 1)
+        book.save()
+
+        messages.success(request, f"You have successfully borrowed '{book.title}'.")
+        return redirect('books:book_detail', pk=book.pk)
+
+
 class ReturnBookView(LibrarianRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         loan = get_object_or_404(Loan, pk=pk, return_date__isnull=True)

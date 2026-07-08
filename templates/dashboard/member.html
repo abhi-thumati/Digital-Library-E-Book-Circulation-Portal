@@ -123,7 +123,7 @@
                 <td colspan="5" class="text-center py-5 text-secondary">
                   <i class="bi bi-journal-x fs-1 opacity-25 d-block mb-3"></i>
                   You currently have no borrowed books.
-                  <a href="#" class="btn btn-primary btn-sm d-inline-block ms-2 py-1 px-3">Browse Catalogue</a>
+                  <a href="{% url 'books:book_list' %}" class="btn btn-primary btn-sm d-inline-block ms-2 py-1 px-3">Browse Catalogue</a>
                 </td>
               </tr>
             {% endfor %}

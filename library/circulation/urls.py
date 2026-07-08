@@ -8,6 +8,7 @@ urlpatterns = [
     path('active/', views.ActiveLoansListView.as_view(), name='active_loans'),
     path('overdue/', views.OverdueLoansListView.as_view(), name='overdue_loans'),
     path('issue/', views.IssueBookView.as_view(), name='issue_book'),
+    path('issue/book/<int:book_id>/', views.MemberIssueBookView.as_view(), name='member_issue_book'),
     path('return/<int:pk>/', views.ReturnBookView.as_view(), name='return_book'),
     path('pay-fine/<int:pk>/', views.PayFineView.as_view(), name='pay_fine'),
     
